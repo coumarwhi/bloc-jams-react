@@ -15,6 +15,7 @@ class Album extends Component {
       currentSong: album.songs[0],
       currentTime: 0,
       duration: album.songs[0].duration,
+      volume: 0,
       isPlaying: false
     };
 
@@ -88,6 +89,24 @@ class Album extends Component {
     this.setState({ currentTime: newTime });
   }
 
+  handleVolumeChange(e) {
+    const newVol = e.target.value;
+    this.audioElement.volume = newVol; 
+    this.setState({ volume: newVol });
+  }
+
+  formatTime() {
+    const minutes = Math.floor(this.audioElement.currentTime / 60);
+    const seconds = Math.round(this.audioElement.currentTime % 60);
+    if (seconds == 0 && minutes == 0) {
+      return "-:--"
+    } else if (seconds < 10) {
+      return minutes + ":0" + seconds
+    } else {
+      return minutes + ":" + seconds
+    }
+  }
+
   render() {
     return (
       <section className="album">
@@ -117,7 +136,7 @@ class Album extends Component {
                   </button>
                 </td>
                 <td className="song-title">{song.title}</td>
-                <td className="song-duration">{song.duration}</td>
+                <td className="song-duration">{this.formatTime(song.duration)}</td>
               </tr>
             )}
           </tbody>
@@ -131,6 +150,8 @@ class Album extends Component {
           handlePrevClick={() => this.handlePrevClick()}
           handleNextClick={() => this.handleNextClick()}
           handleTimeChange={(e) => this.handleTimeChange(e)}
+          handleVolumeChange={(e) => this.handleVolumeChange(e)}
+          formatTime={() => this.formatTime()}
           />
       </section>
     );
