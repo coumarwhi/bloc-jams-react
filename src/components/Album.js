@@ -16,7 +16,8 @@ class Album extends Component {
       currentTime: 0,
       duration: album.songs[0].duration,
       volume: 0,
-      isPlaying: false
+      isPlaying: false,
+      hover: ""
     };
 
     this.audioElement = document.createElement('audio');
@@ -95,10 +96,34 @@ class Album extends Component {
     this.setState({ volume: newVol });
   }
 
+  handleMouseOver(e){
+    const currentHover = this.state.album.songs[e.target.innerText -1];
+    this.setState({hover: currentHover});
+  }
+
+  handleMouseOut(e){
+    this.setState({hover: ""});
+  }
+
+  hoverChange(song){
+    if (this.state.currentSong === song && ((this.state.isPlaying === false && this.state.hover === song) || (this.state.isPlaying && this.state.hover!== song))){
+      return 'ion-pause';
+    }
+    else if (this.state.currentSong === song && ((this.state.isPlaying && this.state.hover === song) || (this.state.isPlaying === false && this.state.hover !== song))){
+      return 'ion-play';
+    }
+    else if (this.state.hover === song) {
+      return 'ion-play';
+    }
+    else {
+      return null;
+    }
+  }
+
   formatTime() {
     const minutes = Math.floor(this.audioElement.currentTime / 60);
     const seconds = Math.round(this.audioElement.currentTime % 60);
-    if (seconds == 0 && minutes == 0) {
+    if (seconds === 0 && minutes === 0) {
       return "-:--"
     } else if (seconds < 10) {
       return minutes + ":0" + seconds
@@ -118,7 +143,7 @@ class Album extends Component {
             <div id="release-info">{this.state.album.releaseInfo}</div>
           </div>
         </section>
-        <table id="song-list">
+        <table className="table table-striped">
            <colgroup>
              <col id="song-number-column" />
              <col id="song-title-column" />
@@ -129,19 +154,25 @@ class Album extends Component {
             this.state.album.songs.map(( song, index ) =>
               <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
                 <td className="song-actions">
-                  <button>
-                    <span className="song-number">{index+1}</span>
-                    <span className="ion-play"></span>
-                    <span className="ion-pause"></span>
+                  <button type="button" className="btn btn-outline-secondary">
+                  <span className={this.hoverChange(song)}
+                    onMouseOver={(e) => this.handleMouseOver(e)}
+                    onMouseOut={(e) => this.handleMouseOut(e)}>
+                        {this.state.hover === song ?
+                          null :
+                          this.state.currentSong !== song ?
+                          this.state.album.songs.indexOf(song) + 1 :
+                          null}
+                    </span>
                   </button>
                 </td>
                 <td className="song-title">{song.title}</td>
-                <td className="song-duration">{this.formatTime(song.duration)}</td>
+                <td className="song-duration">{song.duration}</td>
               </tr>
             )}
           </tbody>
          </table>
-         <PlayerBar 
+         <PlayerBar
           isPlaying={this.state.isPlaying} 
           currentSong={this.state.currentSong} 
           currentTime={this.audioElement.currentTime}
