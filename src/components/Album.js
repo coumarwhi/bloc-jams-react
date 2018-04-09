@@ -132,6 +132,18 @@ class Album extends Component {
     }
   }
 
+  totalTime() {
+    const minutes = Math.floor(this.audioElement.duration / 60);
+    const seconds = Math.round(this.audioElement.duration % 60);
+    if (seconds === 0 && minutes === 0) {
+      return "-:--"
+    } else if (seconds < 10) {
+      return minutes + ":0" + seconds
+    } else {
+      return minutes + ":" + seconds
+    }
+  }
+
   render() {
     return (
       <section className="album">
@@ -183,6 +195,7 @@ class Album extends Component {
           handleTimeChange={(e) => this.handleTimeChange(e)}
           handleVolumeChange={(e) => this.handleVolumeChange(e)}
           formatTime={() => this.formatTime()}
+          totalTime={() => this.totalTime()}
           />
       </section>
     );
