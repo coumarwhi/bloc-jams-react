@@ -14,7 +14,6 @@ class App extends Component {
           <nav className='nav nav-pills'>
             <Link className='nav-link' to='/'>Landing</Link>
             <Link className='nav-link' to='/Library'>Library</Link>
-            <Link className='nav-link' to='/Album'>Album</Link>
           </nav>
           <h1 className="align-self-center mr-3">Bloc Jams</h1>
         </header>
